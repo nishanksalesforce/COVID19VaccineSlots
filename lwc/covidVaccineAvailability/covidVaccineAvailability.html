@@ -1,0 +1,38 @@
+<template>
+  <lightning-card title="COVID-19 Vaccine Availability">
+    <div class="slds-m-around_medium">
+        <div class="slds-m-around_medium">
+            <lightning-input type="number" label="Pincode" name="pincode" value={pincode} onchange={handlePincodeChange} ></lightning-input>
+        </div>
+        <div class="slds-m-around_medium">
+            <lightning-input type="date" label="Date" name="date" value={date} onchange={handleDateChange} ></lightning-input>
+        </div>
+        <div class="slds-m-around_medium">
+            <lightning-button label="Check Availability" onclick={handleSearchClick}></lightning-button>
+        </div>
+    </div>
+    <template if:true={slotAvailability}>
+      <div class="slds-m-around_medium">
+        <ul>
+          <template for:each={slotAvailability} for:item="slot">
+            <li key={slot.center_id}>
+              <div class="slds-text-heading_small">{slot.name}</div>
+              <div class="slds-text-body_small">{slot.address}</div>
+              <div class="slds-text-body_small">Slots: {slot.slots}</div>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </template>
+    <template if:true={error}>
+      <div class="slds-m-around_medium">
+        <p class="slds-text-heading_small">Error: {error}</p>
+      </div>
+    </template>
+    <template if:true={loading}>
+      <div class="slds-m-around_medium">
+        <lightning-spinner variant="brand" size="medium"></lightning-spinner>
+      </div>
+    </template>
+  </lightning-card>
+</template>
