@@ -1,0 +1,31 @@
+public with sharing class CovidVaccineAvailabilityController {
+  @AuraEnabled(cacheable=true)
+  public static List<CovidVaccineSlot> getCovidVaccineSlots(String pincode, String dateValue) {
+    Http http = new Http();
+    HttpRequest request = new HttpRequest();
+    request.setEndpoint('https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=' + pincode + '&date=' + dateValue);
+    request.setHeader('Accept', 'application/json');
+    request.setMethod('GET');
+    HttpResponse response = http.send(request);
+    if (response.getStatusCode() == 200) {
+      CovidVaccineSlotResponse slotResponse = (CovidVaccineSlotResponse) JSON.deserialize(response.getBody(), CovidVaccineSlotResponse.class);
+      return slotResponse.sessions;
+    } else {
+      throw new AuraHandledException('Unable to fetch vaccine slot availability.');
+    }
+  }
+
+  public class CovidVaccineSlotResponse {
+    public List<CovidVaccineSlot> sessions { get; set; }
+  }
+
+  public class CovidVaccineSlot {
+    public String center_id { get; set; }
+    public String name { get; set; }
+    public String address { get; set; }
+    public Integer available_capacity { get; set; }
+    public Integer min_age_limit { get; set; }
+    public String vaccine { get; set; }
+    public List<String> slots { get; set; }
+  }
+}
